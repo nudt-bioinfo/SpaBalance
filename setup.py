@@ -3,7 +3,7 @@ from setuptools import Command, find_packages, setup
 __lib_name__ = "SpaBalance"
 __lib_version__ = "1.1.5"
 __description__ = "Harmonizing Gradient Learning and Feature Disentanglement for Robust Spatial Multi-omics Integration"
-__url__ = "https://github.com/JinmiaoChenLab/SpatialGlue"
+__url__ = "https://github.com/nudt-bioinfo/SpaBalance"
 __author__ = "Yong Zhao"
 __author_email__ = "zhaoyong23a@nudt.edu.cn"
 __license__ = "MIT"
