@@ -32,7 +32,7 @@ For a detailed step-by-step tutorial, please refer to the Tutorial.py script.
 We tested simulated dataset and experimental datasets, including:  
 
 - **mouse spleen dataset** obtained using the SPOTS technique (Ben-Chetrit et al., 2023).  
-- **mouse thymus dataset** generated using Stereo-CITE-seq technology (unpublished).  
+- **mouse thymus dataset** generated using Stereo-CITE-seq technology (Liao et al. 2023).  
 - **mouse brain spatial epigenome-transcriptome dataset** (Zhang et al., 2023).  
 - **human lymph node dataset** obtained using the 10x Visium CytAssist technology (Long et al., 2024).  
 - **simulated dataset** containing three omics (Long et al., 2024).
