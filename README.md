@@ -1,4 +1,4 @@
-# Robust Spatial Multi-Omics Integration with SpaBalance via Coordinated Gradient Learning and Feature Decoupling
+# SpaBalance: Balanced Learning for Efficient Spatial Multi-Omics Decoding
 This repository contains the necessary SpaBalance scripts to reproduce the benchmark results presented in the paper. We also provide experimental data, which can be found in the data folder. All experiments can be reproduced using the provided Tutorial.py script. 
 
 ![](https://github.com/nudt-bioinfo/SpaBalance/blob/main/framework.png)
@@ -38,4 +38,22 @@ We tested simulated dataset and experimental datasets, including:
 - **simulated dataset** containing three omics (Long et al., 2024).
 
 The SPOTS data for the mouse spleen is available in the **GEO database** (accession number **GSE198353**, [GEO Accession Viewer](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE198353)). The Stereo-CITE-seq data for the mouse thymus is provided by **BGI**. The spatial epigenome-transcriptome data for the mouse brain is available on **AtlasXplore** ([AtlasXplore](https://web.atlasxomics.com/visualization/Fan)).  The human lymph node dataset and simulated dataset can be accessed at the [GitHub repository of JinmiaoChenLab/SpatialGlue](https://github.com/JinmiaoChenLab/SpatialGlue).
+
+## Citation
+If you find this project useful in your research, please consider citing:
+
+**GB/T 7714**
+> Cui Y, Zhao Y, Yang C, et al. SpaBalance: Balanced Learning for Efficient Spatial Multi‐Omics Decoding[J]. Advanced Science, 2025: e12973. https://doi.org/10.1002/advs.202512973
+
+**BibTeX**
+```bibtex
+@article{cui2025spabalance,
+  title={SpaBalance: Balanced Learning for Efficient Spatial Multi-Omics Decoding},
+  author={Cui, Yingbo and Zhao, Yong and Yang, Canqun and Tang, Tao and Liao, Xiangke and Zhang, Hongyu and Zhao, Huiying and Wang, Zheng and Zeng, Yuansong},
+  journal={Advanced Science},
+  pages={e12973},
+  year={2025},
+  publisher={Wiley Online Library}
+}
+
 
