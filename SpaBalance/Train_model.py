@@ -315,13 +315,11 @@ class Train_SpaBalance:
            self.weight = 50
 
     def train(self):
-        # 初始化模型和优化器
         self.training = True
         self.model = Encoder_overall(self.dim_input1, self.dim_output1, self.dim_input2, self.dim_output2).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), self.learning_rate, weight_decay=self.weight_decay)
         self.model.train()
-
-        # 初始化 Balance 实例
+        
         pareto_solver = Balance(self.model, self.optimizer, self.device, epochs=self.epochs, weight=self.weight)
         self.label_CSL_omics1 = torch.FloatTensor(self.adata_omics1.obsm['label_CSL']).to(self.device)
         self.label_CSL_omics2 = torch.FloatTensor(self.adata_omics2.obsm['label_CSL']).to(self.device)
@@ -330,7 +328,7 @@ class Train_SpaBalance:
             self.model.train()
             self.features_omics1a = permutation(self.features_omics1)
             self.features_omics2a = permutation(self.features_omics2)
-            # 前向传播
+        
             results = self.model(
                 self.features_omics1, self.features_omics2,
                 self.features_omics1a, self.features_omics2a,
@@ -338,21 +336,21 @@ class Train_SpaBalance:
                 self.adj_spatial_omics2, self.adj_feature_omics2,
             )
 
-            # 计算对比损失
+            
             constractive_loss = self.model.barlow_twins_loss(results['emb_latent_omics1'], results['emb_latent_omics2'])
             constractive_loss_reverse = self.model.barlow_twins_loss(results['emb_latent_omics2'], results['emb_latent_omics1'])
             constractive_loss = (constractive_loss + constractive_loss_reverse) / 2
-            # 计算损失
+            
             loss_omics1 = pareto_solver.compute_loss_omics(self.label_CSL_omics1, self.features_omics1, results, 'omics1')
             loss_omics2 = pareto_solver.compute_loss_omics(self.label_CSL_omics2, self.features_omics2, results, 'omics2')
             all_losses = pareto_solver.compute_loss(results, constractive_loss, loss_omics1, loss_omics2, epoch)
-            # 计算总梯度
+            
             grads = pareto_solver.calculate_gradients(all_losses)
-            #计算权重（考虑任务相似性)
+            
             weights = pareto_solver.compute_weights_with_similarity(grads) 
-             #加权计算总损失
+            
             total_loss = sum(weights[task] * all_losses[task] for task in all_losses.keys())
-            # 更新模型参数
+            
             self.optimizer.zero_grad()
             total_loss.backward()
             self.optimizer.step()
@@ -361,7 +359,7 @@ class Train_SpaBalance:
 
         print("Model training finished!\n")    
 
-        # 推理阶段
+        
         with torch.no_grad():
             self.training = False
             self.model.eval()
@@ -372,7 +370,7 @@ class Train_SpaBalance:
                 self.adj_spatial_omics2, self.adj_feature_omics2,
             )
 
-        # 输出嵌入结果
+        
         emb_omics1 = F.normalize(results['emb_latent_omics1'], p=2, eps=1e-12, dim=1)  
         emb_omics2 = F.normalize(results['emb_latent_omics2'], p=2, eps=1e-12, dim=1)
         emb_combined = F.normalize(results['emb_latent_combined'], p=2, eps=1e-12, dim=1)
