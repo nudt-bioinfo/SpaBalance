@@ -228,7 +228,7 @@ class OmicsDataset(Dataset):
         return self.features_omics1[idx], self.features_omics2[idx]
     
 def StrLabel2Idx(string_labels):
-    # 创建LabelEncoder对象
+    
     label_encoder = LabelEncoder()
     idx_labels = label_encoder.fit_transform(string_labels)
     
