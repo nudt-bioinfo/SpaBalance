@@ -111,9 +111,9 @@ class Encoder_overall(Module):
         x = F.normalize(x, dim=1)
         y = F.normalize(y, dim=1)
         N = x.size(0)
-        cross_corr = (x.T @ y) / N  # 计算交叉相关矩阵
-        diag_loss = torch.sum((torch.diagonal(cross_corr) - 1) ** 2)  # 对角项接近1
-        off_diag_loss = torch.sum(cross_corr ** 2) - diag_loss  # 非对角项接近0
+        cross_corr = (x.T @ y) / N  
+        diag_loss = torch.sum((torch.diagonal(cross_corr) - 1) ** 2)  
+        off_diag_loss = torch.sum(cross_corr ** 2) - diag_loss  
         return diag_loss + lam * off_diag_loss    
 
 '''
