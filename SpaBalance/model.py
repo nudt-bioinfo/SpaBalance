@@ -242,9 +242,7 @@ class Multi_CrossAttention(nn.Module):
         self.linear_v = nn.Linear(hidden_size, all_head_size, bias=False)
 
         # Independent attention heads for each modality
-        self.modality_attention_heads = nn.ModuleList([
-            nn.Linear(1, self.h_size) for _ in range(num_modalities)
-        ])
+        self.modality_attention_heads = nn.Linear(1, num_modalities)
 
         # Normalization factor
         self.norm = sqrt(self.h_size)
