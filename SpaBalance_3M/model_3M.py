@@ -157,10 +157,18 @@ class Encoder_overall(Module):
         x = F.normalize(x, dim=1)
         y = F.normalize(y, dim=1)
         N = x.size(0)
-        cross_corr = (x.T @ y) / N  # 计算交叉相关矩阵
-        diag_loss = torch.sum((torch.diagonal(cross_corr) - 1) ** 2)  # 对角项接近1
-        off_diag_loss = torch.sum(cross_corr ** 2) - diag_loss  # 非对角项接近0
-        return diag_loss + lam * off_diag_loss    
+      
+        # Compute cross-correlation matrix
+        cross_corr = (x.T @ y) / N  
+      
+        # Encourage diagonal elements to be close to 1 (invariance term)
+        diag_loss = torch.sum((torch.diagonal(cross_corr) - 1) ** 2)  
+      
+        # Encourage off-diagonal elements to be close to 0 (redundancy reduction term)
+        off_diag_loss = torch.sum(cross_corr ** 2) - diag_loss  
+      
+        return diag_loss + lam * off_diag_loss
+    
 
 class Encoder(Module): 
     
@@ -301,57 +309,61 @@ class Multi_CrossAttention(nn.Module):
 
         assert all_head_size % head_num == 0
 
-        # Q, K, V 的线性映射层
+        # Linear projection layers for Q, K, and V
         self.linear_q = nn.Linear(hidden_size, all_head_size, bias=False)
         self.linear_k = nn.Linear(hidden_size, all_head_size, bias=False)
         self.linear_v = nn.Linear(hidden_size, all_head_size, bias=False)
 
-        # 每个模态的独立注意力头
-        self.modality_attention_heads = nn.ModuleList([
-            nn.Linear(1, self.h_size) for _ in range(num_modalities)
-        ])
+        # Linear layer to generate modality-specific attention weights
+        self.modality_attention_heads = nn.Linear(1, num_modalities)
         
-        # 归一化因子
+        # Scaling factor for attention normalization
         self.norm = sqrt(self.h_size)
 
     def forward(self, emb1, emb2, emb3):
         num_cells = emb1.size(0)
 
-        # 融合特征生成 Q, K, V
+        # Generate Q from emb1
         Q = self.linear_q(emb1).view(num_cells, self.num_heads, self.h_size).transpose(0, 1)
-        # 分别生成 K 和 V
+        
+        # Generate K for each modality
         K2 = self.linear_k(emb2).view(num_cells, self.num_heads, self.h_size).transpose(0, 1)
         K3 = self.linear_k(emb3).view(num_cells, self.num_heads, self.h_size).transpose(0, 1)
-        K = K2 + K3  # 按权重加权相加或融合
+        K = K2 + K3  # Fuse keys from different modalities (e.g., weighted summation)
 
+        # Generate V for each modality
         V2 = self.linear_v(emb2).view(num_cells, self.num_heads, self.h_size).transpose(0, 1)
         V3 = self.linear_v(emb3).view(num_cells, self.num_heads, self.h_size).transpose(0, 1)
         V = V2 + V3
 
-        # 计算注意力分数
-        attention_scores = torch.matmul(Q, K.transpose(-1, -2)) / self.norm  # [num_heads, 3484, 3484]
-        attention_weights = F.softmax(attention_scores, dim=-1)  # [num_heads, 3484, 3484]
+        # Compute attention scores
+        attention_scores = torch.matmul(Q, K.transpose(-1, -2)) / self.norm  # [num_heads, N, N]
+        attention_weights = F.softmax(attention_scores, dim=-1)  # [num_heads, N, N]
     
-        # 每个模态单独建模注意力权重
+        # Model modality-specific attention weights
         modality_weights = []
         for head in self.modality_attention_heads:
-            # 聚合多头的注意力输出
-            aggregated_weights = attention_weights.mean(dim=0).mean(dim=-1)  # [3484, h_size]
-            modality_weight = head(aggregated_weights.unsqueeze(-1))  # [3484, 1]
+            # Aggregate attention weights across heads
+            aggregated_weights = attention_weights.mean(dim=0).mean(dim=-1)
+            modality_weight = head(aggregated_weights.unsqueeze(-1))
             modality_weights.append(modality_weight)
     
-        # 拼接并归一化模态权重
-        modality_weights = torch.cat(modality_weights, dim=-1)  # [3484, num_modalities]
-        modality_weights = F.softmax(modality_weights, dim=-1)  # [3484, num_modalities]
+        # Concatenate and normalize modality weights
+        modality_weights = torch.cat(modality_weights, dim=-1)  # [N, num_modalities]
+        modality_weights = F.softmax(modality_weights, dim=-1)
 
-        # 整合模态数据
-        emb1_weighted = emb1 * modality_weights[:, 0:1]  # 对 emb1 加权, shape = [3484, hidden_size]
-        emb2_weighted = emb2 * modality_weights[:, 1:2]  # 对 emb2 加权, shape = [3484, hidden_size]
-        emb3_weighted = emb3 * modality_weights[:, 2:3]  # 对 emb3 加权, shape = [3484, hidden_size]
-        integrated_embeddings = emb1_weighted + emb2_weighted + emb3_weighted # 模态数据整合, shape = [3484, hidden_size]
+        # Apply modality-specific weighting
+        emb1_weighted = emb1 * modality_weights[:, 0:1]
+        emb2_weighted = emb2 * modality_weights[:, 1:2]
+        emb3_weighted = emb3 * modality_weights[:, 2:3]
+
+        # Integrate embeddings from all modalities
+        integrated_embeddings = (
+            emb1_weighted + emb2_weighted + emb3_weighted
+        )  # Final integrated representation
 
         return integrated_embeddings, modality_weights
-    
+          
 class Discriminator(nn.Module):
     def __init__(self, n_h):
         super(Discriminator, self).__init__()
