@@ -153,9 +153,7 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
 
 def sparse_mx_to_dense_tensor(sparse_mx):
     """Convert a scipy sparse matrix to a dense torch tensor."""
-    # 将 scipy 稀疏矩阵转换为稠密的 NumPy 数组
     dense_array = sparse_mx.toarray().astype(np.float32)
-    # 将 NumPy 数组转换为 PyTorch 的稠密 Tensor
     dense_tensor = torch.from_numpy(dense_array)
     return dense_tensor
 
