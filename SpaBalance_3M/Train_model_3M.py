@@ -131,7 +131,7 @@ class Balance:
         grads = {task: {} for task in losses.keys()}
         for task, loss in losses.items():
             self.optimizer.zero_grad()
-            loss.backward(retain_graph=True)  # 保留计算图以计算多个任务的梯度
+            loss.backward(retain_graph=True)  
             grads[task]['concat'] = torch.cat([p.grad.view(-1) for p in self.model.parameters() if p.grad is not None]).detach()
         return grads
 
@@ -181,7 +181,7 @@ class Balance:
             # dynamic learning rate
             lr = self.optimizer.param_groups[0]['lr'] * gradnorm_loss.item()
             for task in self.task_weight.keys():
-                self.task_weight[task] = max(self.task_weight[task] - lr, 1e-4)  # 确保权重非负
+                self.task_weight[task] = max(self.task_weight[task] - lr, 1e-4)  
 
         return self.task_weight
 
