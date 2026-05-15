@@ -14,9 +14,8 @@ adata_omics2.var_names_make_unique()
 # Specify data type
 data_type = '10x' # '10x', SPOTS', 'Stereo-CITE-seq', and 'Spatial-epigenome-transcriptome'.
 
-# Fix random seed0
 from SpaBalance.preprocess import fix_seed
-random_seed = 2022
+random_seed = random.randint(0, 100000)
 fix_seed(random_seed)
 
 from SpaBalance.preprocess import clr_normalize_each_cell, pca
