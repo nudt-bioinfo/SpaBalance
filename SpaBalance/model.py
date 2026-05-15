@@ -60,7 +60,7 @@ class Encoder_overall(Module):
         
         # graph1
         hidden_spatial_omics1,emb_latent_spatial_omics1, ret_spatial_omics1, ret_spatial_omics1a = self.encoder_omics1(features_omics1, features_omics1a, adj_spatial_omics1)  
-        hidden_spatial_omics1,emb_latent_spatial_omics2, ret_spatial_omics2, ret_spatial_omics2a = self.encoder_omics2(features_omics2, features_omics2a, adj_spatial_omics2)
+        hidden_spatial_omics2,emb_latent_spatial_omics2, ret_spatial_omics2, ret_spatial_omics2a = self.encoder_omics2(features_omics2, features_omics2a, adj_spatial_omics2)
         
         # graph2
         hidden_feature_omics1, emb_latent_feature_omics1, ret_feature_omics1, ret_feature_omics1a = self.encoder_omics1(features_omics1, features_omics1a, adj_feature_omics1)
