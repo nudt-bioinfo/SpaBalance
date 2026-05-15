@@ -254,7 +254,6 @@ def tfidf(X):
         return tf * idf   
     
 def fix_seed(seed):
-    #seed = 2023
     os.environ['PYTHONHASHSEED'] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
