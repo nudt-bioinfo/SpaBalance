@@ -78,9 +78,6 @@ class Encoder_overall(Module):
         hidden_feature_omics3, emb_latent_feature_omics3, ret_feature_omics3, ret_feature_omics3a = self.encoder_omics3(features_omics3, features_omics3a, adj_feature_omics3)
         
         # within-modality attention aggregation layer
-        #emb_latent_omics1, alpha_omics1 = self.atten_omics1(emb_latent_spatial_omics1, emb_latent_feature_omics1)
-        #emb_latent_omics2, alpha_omics2 = self.atten_omics2(emb_latent_spatial_omics2, emb_latent_feature_omics2)
-        #emb_latent_omics3, alpha_omics3 = self.atten_omics3(emb_latent_spatial_omics3, emb_latent_feature_omics3)
         emb_latent_omics1 = self.atten_omics1(emb_latent_spatial_omics1, emb_latent_feature_omics1)
         emb_latent_omics2 = self.atten_omics2(emb_latent_spatial_omics2, emb_latent_feature_omics2)
         emb_latent_omics3 = self.atten_omics3(emb_latent_spatial_omics3, emb_latent_feature_omics3)
