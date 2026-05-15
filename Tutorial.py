@@ -71,6 +71,6 @@ sc.pl.embedding(adata, basis='spatial', color='SpaBalance', ax=ax_list[1], title
 
 plt.tight_layout(w_pad=0.3)
 # save the figure
-output_path = "/your/output/path/spaBalance_results.png"
+output_path = "/your/output/path/SpaBalance_results.png"
 plt.savefig(output_path, dpi=300)  # save the figure as a PNG image with a resolution of 300 dpi
 plt.show()
