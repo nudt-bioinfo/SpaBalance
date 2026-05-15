@@ -222,7 +222,7 @@ class Train_SpaBalance:
         data,
         datatype = 'SPOTS',
         device= torch.device('cpu'),
-        random_seed = 2022,
+        random_seed = random.randint(0, 100000),
         learning_rate=0.0001,
         weight_decay=0.00,
         epochs=600, 
